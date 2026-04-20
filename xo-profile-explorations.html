@@ -522,6 +522,164 @@
     .expB .empty p { font-size: 14px; font-weight: 600; }
     .expB .empty span { font-size: 12px; color: var(--gray-text); }
 
+    /* ══════════════════════════════════════════════
+       RESPONSIVE — mobile & tablet
+    ══════════════════════════════════════════════ */
+
+    @media (max-width: 768px) {
+
+      /* Switcher */
+      .switcher { padding: 10px 16px; gap: 6px; flex-wrap: wrap; }
+      .switcher-label { display: none; }
+      .sw-btn { font-size: 12px; padding: 6px 14px; }
+
+      /* ── Shared nav ── */
+      .expA nav, .expB nav {
+        padding: 0 16px; height: 54px; gap: 0;
+      }
+      .expA .nav-links, .expB .nav-links { display: none; }
+      .expA .nav-right, .expB .nav-right { gap: 8px; }
+      .expA .btn-deposit, .expB .btn-deposit { font-size: 12px; padding: 7px 12px; }
+
+      /* ── EXP A ── */
+
+      /* Stack sidebar above main */
+      .expA .layout {
+        grid-template-columns: 1fr;
+        min-height: unset;
+      }
+      .expA .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-border);
+        padding: 20px 16px;
+        gap: 16px;
+      }
+      /* Sidebar header: avatar inline with identity */
+      .expA .sidebar-avatar {
+        width: 56px; height: 56px; border-radius: 10px;
+      }
+      .expA .sidebar-avatar svg { width: 56px; height: 56px; }
+      /* Inline avatar + identity as a row */
+      .expA .sidebar > .sidebar-avatar,
+      .expA .sidebar > .sidebar-identity {
+        display: block;
+      }
+      .expA .sidebar-header-row {
+        display: flex; align-items: flex-start; gap: 14px;
+      }
+      /* Stats: 2-column grid instead of stacked */
+      .expA .sidebar-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      /* Main panel */
+      .expA .main { padding: 16px; gap: 12px; }
+      /* PnL + quick stats: single column */
+      .expA .top-row { grid-template-columns: 1fr; }
+      .expA .quick-actions { flex-direction: row; }
+      .expA .qa-card { padding: 12px 14px; }
+      .expA .qa-val { font-size: 18px; }
+      /* Portfolio head: stack tabs + controls */
+      .expA .port-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 16px;
+      }
+      .expA .port-right { width: 100%; flex-wrap: wrap; gap: 8px; }
+      .expA .search-box { flex: 1; min-width: 0; }
+      .expA .search-box input { width: 100%; }
+      .expA .btn-create { font-size: 12px; padding: 7px 12px; }
+      /* Table: hide less important columns */
+      .expA .table-head {
+        grid-template-columns: 1fr 90px 80px;
+      }
+      .expA .table-head .th:nth-child(4),
+      .expA .table-head .th:nth-child(5) { display: none; }
+      .expA .port-bar { padding: 10px 16px; font-size: 12px; }
+
+      /* ── EXP B ── */
+
+      .expB .hero { height: 120px; }
+      .expB .identity-wrap {
+        padding: 0 14px;
+        margin-top: -40px;
+      }
+      /* Stack avatar + identity vertically */
+      .expB .identity-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 16px 14px;
+      }
+      .expB .b-avatar {
+        width: 80px; height: 80px; border-radius: 12px;
+        margin-top: -40px;
+      }
+      .expB .b-avatar svg { width: 80px; height: 80px; }
+      .expB .identity-actions {
+        position: absolute; top: 14px; right: 16px;
+        padding-bottom: 0;
+      }
+      .expB .identity-card { position: relative; }
+      .expB .b-name { font-size: 18px; }
+      /* Stats bar: 2-column grid, wrap */
+      .expB .stats-bar {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .expB .stat-cell {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--gray-border);
+      }
+      .expB .stat-cell:nth-child(3) { border-right: none; }
+      .expB .stat-cell:nth-child(4),
+      .expB .stat-cell:nth-child(5) { border-bottom: none; }
+      .expB .sc-val { font-size: 16px; }
+
+      .expB .page { padding: 14px 14px; gap: 12px; }
+      /* PnL + info card: single column */
+      .expB .mid-row { grid-template-columns: 1fr; }
+      /* Portfolio */
+      .expB .port-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 14px;
+      }
+      .expB .port-controls { width: 100%; flex-wrap: wrap; gap: 8px; }
+      .expB .b-search { flex: 1; min-width: 0; }
+      .expB .b-search input { width: 100%; }
+      .expB .b-create { font-size: 12px; padding: 7px 12px; }
+      .expB .table-head {
+        grid-template-columns: 1fr 90px 80px;
+      }
+      .expB .table-head .th:nth-child(4),
+      .expB .table-head .th:nth-child(5) { display: none; }
+      .expB .port-bar { padding: 10px 14px; font-size: 12px; }
+
+      /* Modal full-screen on mobile */
+      .modal-bg { padding: 0; align-items: flex-end; }
+      .export-modal {
+        border-radius: 18px 18px 0 0;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .expA .sidebar-stats { grid-template-columns: 1fr; }
+      .expA .quick-actions { flex-direction: column; }
+      .expB .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .expB .stat-cell:nth-child(2) { border-right: none; }
+      .expB .stat-cell:nth-child(3) { border-right: 1px solid var(--gray-border); }
+      .expB .stat-cell:nth-child(3),
+      .expB .stat-cell:nth-child(4) { border-bottom: 1px solid var(--gray-border); }
+      .expB .stat-cell:nth-child(5) { grid-column: span 2; border-right: none; border-bottom: none; }
+      .expA .port-right, .expB .port-controls { flex-direction: column; align-items: stretch; }
+      .expA .filter-chips, .expB .filter-pills { width: 100%; }
+      .expA .chip, .expB .fpill { flex: 1; text-align: center; }
+    }
+
     /* ── EXPORT MODAL (shared) ── */
     .modal-bg {
       position: fixed; inset: 0; z-index: 500;
@@ -616,17 +774,18 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <!-- Avatar + identity -->
-      <div class="sidebar-avatar">
-        <svg viewBox="0 0 72 72" fill="none"><rect width="72" height="72" fill="#7C5CBF"/>
-          <ellipse cx="36" cy="48" rx="14" ry="16" fill="#000"/>
-          <ellipse cx="36" cy="26" rx="9" ry="10" fill="#000"/>
-          <path d="M31 19 Q33 13 35 16 Q36 10 38 14 Q40 8 42 13 Q44 18 40 20 Q36 18 31 19Z" fill="#000"/>
-          <path d="M42 28 L47 26 L42 30Z" fill="#000"/>
-          <circle cx="40" cy="25" r="1.5" fill="#7C5CBF"/>
-        </svg>
-      </div>
+      <div class="sidebar-profile-row" style="display:flex;gap:14px;align-items:flex-start;">
+        <div class="sidebar-avatar">
+          <svg viewBox="0 0 72 72" fill="none"><rect width="72" height="72" fill="#7C5CBF"/>
+            <ellipse cx="36" cy="48" rx="14" ry="16" fill="#000"/>
+            <ellipse cx="36" cy="26" rx="9" ry="10" fill="#000"/>
+            <path d="M31 19 Q33 13 35 16 Q36 10 38 14 Q40 8 42 13 Q44 18 40 20 Q36 18 31 19Z" fill="#000"/>
+            <path d="M42 28 L47 26 L42 30Z" fill="#000"/>
+            <circle cx="40" cy="25" r="1.5" fill="#7C5CBF"/>
+          </svg>
+        </div>
 
-      <div class="sidebar-identity">
+      <div class="sidebar-identity" style="flex:1;min-width:0;">
         <div class="sidebar-name-row">
           <span class="sidebar-name">xouser1043</span>
           <span class="badge-verify">✓ Verify</span>
@@ -647,7 +806,8 @@
 
         <!-- Bio -->
         <div class="sidebar-bio empty">Introduce yourself — what are you trading and why? (click to add)</div>
-      </div>
+      </div><!-- /sidebar-identity -->
+      </div><!-- /sidebar-profile-row -->
 
       <div class="s-divider"></div>
 
