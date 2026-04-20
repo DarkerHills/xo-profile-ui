@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XO Market – Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:       #FFFFFF;
+      --bg:          #F5F5F5;
+      --black:       #000000;
+      --pink:        #FF5BA7;
+      --pink-light:  #FFE4EC;
+      --lavender:    #EDE9F8;
+      --lime:        #C8FF00;
+      --gray-text:   #888888;
+      --gray-border: #E5E5E5;
+      --green-pts:   #22C55E;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      height: 64px;
+      gap: 40px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .nav-logo-text {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .nav-beta {
+      background: var(--pink);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 99px;
+      letter-spacing: 0.05em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex: 1;
+    }
+    .nav-links a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-new {
+      background: var(--lime);
+      color: var(--black);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 99px;
+      margin-left: 4px;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: auto;
+    }
+    .btn-deposit {
+      background: var(--pink);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 9px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-deposit::before { content: "●"; font-size: 8px; }
+    .nav-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      position: relative;
+    }
+    .nav-icon-btn svg { width: 20px; height: 20px; }
+    .notif-badge {
+      position: absolute;
+      top: 2px; right: 2px;
+      background: var(--pink);
+      color: var(--white);
+      font-size: 9px;
+      font-weight: 700;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .nav-avatar svg { width: 36px; height: 36px; }
+
+    /* ── PAGE ── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── PROFILE ROW (E: split into left card + right PnL module) ── */
+    .profile-row {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    /* ── PROFILE CARD (left) ── */
+    .profile-card {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 28px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    .profile-avatar {
+      width: 130px;
+      height: 130px;
+      border-radius: 14px;
+      background: #7C5CBF;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .profile-avatar svg { width: 130px; height: 130px; display: block; }
+
+    .profile-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .profile-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .profile-name {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .btn-verify {
+      background: var(--pink);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-verify::before { content: "✓"; }
+
+    /* A: gear settings button */
+    .btn-settings {
+      background: transparent;
+      border: 1px solid var(--gray-border);
+      border-radius: 8px;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--gray-text);
+      position: relative;
+    }
+    .btn-settings svg { width: 16px; height: 16px; }
+    .btn-settings:hover { background: var(--bg); }
+
+    /* Gear dropdown */
+    .settings-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 14px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+      min-width: 280px;
+      z-index: 100;
+      overflow: hidden;
+      display: none;
+    }
+    .btn-settings.open .settings-dropdown { display: block; }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.1s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      color: var(--black);
+      font-family: inherit;
+    }
+    .dropdown-item:hover { background: var(--bg); }
+    .dropdown-item svg { width: 15px; height: 15px; color: var(--gray-text); flex-shrink: 0; }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--gray-border);
+      margin: 4px 0;
+    }
+
+    /* Dropdown wallet section */
+    .dropdown-section-label {
+      padding: 10px 16px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray-text);
+    }
+    .wallet-block {
+      margin: 0 10px 8px;
+      background: var(--bg);
+      border: 1px solid var(--gray-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .wallet-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .wallet-block-type {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .wallet-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .wallet-type-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .wallet-addr {
+      font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+      font-size: 12px;
+      color: #444;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+    .wallet-desc {
+      font-size: 11px;
+      color: var(--gray-text);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .wallet-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .wallet-copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--black);
+      padding: 4px 10px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .wallet-copy-btn:hover { border-color: #aaa; }
+    .wallet-copy-btn.copied { border-color: rgba(34,197,94,.4); color: var(--green-pts); }
+    .wallet-copy-btn svg { width: 12px; height: 12px; }
+    .wallet-export-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: none;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--pink);
+      cursor: pointer;
+      padding: 4px 0;
+      font-family: inherit;
+      transition: opacity 0.15s;
+    }
+    .wallet-export-btn:hover { opacity: 0.75; }
+    .wallet-export-btn svg { width: 12px; height: 12px; }
+
+    /* B: badges — smaller, inside profile-info */
+    .badges-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      opacity: 0.3;
+      background: var(--white);
+    }
+    .badge.active {
+      opacity: 1;
+      border-color: var(--pink);
+      background: var(--pink-light);
+    }
+    .badge.active-fire { opacity: 1; background: #FFF0E0; border-color: #FF8C42; }
+
+    .profile-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .meta-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--gray-text);
+      text-transform: uppercase;
+    }
+    .conviction-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .conviction-icon {
+      width: 20px; height: 20px;
+      background: var(--green-pts);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+    }
+    .conviction-val { font-size: 20px; font-weight: 800; }
+    .referral-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .referral-code { font-size: 14px; font-weight: 700; letter-spacing: 0.04em; }
+    .btn-copy {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-text);
+      font-size: 14px;
+      padding: 0;
+    }
+
+    /* ── PnL MODULE (right, F) ── */
+    .pnl-card {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .pnl-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pnl-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--gray-text);
+      text-transform: uppercase;
+    }
+    .pnl-timefilters {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .pnl-tf {
+      background: transparent;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-text);
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .pnl-tf.active {
+      background: var(--black);
+      color: var(--white);
+    }
+    .pnl-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .pnl-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .pnl-approx {
+      font-size: 14px;
+      color: var(--gray-text);
+      font-weight: 500;
+    }
+    .pnl-period {
+      font-size: 12px;
+      color: var(--gray-text);
+      font-weight: 500;
+      margin-top: -6px;
+    }
+    .pnl-chart {
+      height: 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pnl-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+    .pnl-compare {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--gray-text);
+      font-weight: 500;
+    }
+    .pnl-compare svg { width: 14px; height: 14px; opacity: 0.5; }
+
+    /* ── STATS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--gray-text);
+      text-transform: uppercase;
+    }
+    .stat-value {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── TABS + TOOLBAR ── */
+    .tabs-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .tabs {
+      display: flex;
+      align-items: center;
+    }
+    .tab {
+      background: transparent;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 10px 20px 10px 0;
+      cursor: pointer;
+      color: var(--gray-text);
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .tab.active { color: var(--black); border-bottom-color: var(--black); }
+    .tab:not(:first-child) { padding-left: 20px; }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      width: 210px;
+    }
+    .search-box svg { color: var(--gray-text); flex-shrink: 0; }
+    .search-box input {
+      border: none; outline: none;
+      font-size: 14px; font-family: inherit;
+      color: var(--black); width: 100%; background: transparent;
+    }
+    .search-box input::placeholder { color: var(--gray-text); }
+    .btn-filter {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 8px;
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--black);
+    }
+    .btn-create {
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 9px 18px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    /* ── ACTIVE / CLOSED filter — outlined pill chips ── */
+    .sub-filter {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sub-tab {
+      background: transparent;
+      border: 1.5px solid var(--gray-border);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 99px;
+      cursor: pointer;
+      color: var(--gray-text);
+      font-family: inherit;
+      letter-spacing: 0.01em;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .sub-tab:hover { border-color: #999; color: var(--black); }
+    .sub-tab.active { border-color: var(--black); color: var(--black); background: var(--white); }
+
+    /* ── PORTFOLIO BODY ── */
+    .portfolio-body {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .portfolio-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gray-border);
+      background: var(--bg);
+    }
+    .unclaimed-text { font-size: 14px; font-weight: 500; }
+    .btn-claim {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 16px;
+      cursor: pointer;
+      color: var(--black);
+      font-family: inherit;
+    }
+    .table-header {
+      display: grid;
+      grid-template-columns: 1fr 160px 120px 120px 120px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--gray-border);
+    }
+    .th {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 20px;
+      gap: 8px;
+    }
+    .empty-state p { font-size: 15px; font-weight: 600; }
+    .empty-state span { font-size: 13px; color: var(--gray-text); }
+
+    /* ── EXPORT KEY MODAL ── */
+    .modal-bg {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      animation: fadeBg 0.18s ease;
+    }
+    @keyframes fadeBg { from { opacity:0; } to { opacity:1; } }
+    .export-modal {
+      background: var(--white);
+      border: 1px solid var(--gray-border);
+      border-radius: 18px;
+      width: 100%; max-width: 420px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      animation: modalUp 0.22s ease;
+    }
+    @keyframes modalUp {
+      from { opacity:0; transform: translateY(12px) scale(0.97); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+    .modal-header {
+      padding: 22px 22px 0;
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .modal-eyebrow {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 4px; color: #ef4444;
+    }
+    .modal-title {
+      font-size: 18px; font-weight: 800;
+      letter-spacing: -0.03em; color: var(--black);
+    }
+    .modal-close {
+      background: var(--bg);
+      border: 1px solid var(--gray-border);
+      border-radius: 6px;
+      padding: 4px 11px;
+      font-size: 13px; cursor: pointer;
+      color: var(--gray-text);
+      font-family: inherit;
+      transition: background 0.12s, color 0.12s;
+      flex-shrink: 0;
+    }
+    .modal-close:hover { background: var(--gray-border); color: var(--black); }
+    .modal-body { padding: 18px 22px 22px; }
+
+    /* wallet ref block inside modal */
+    .mwallet-ref {
+      background: var(--bg);
+      border: 1px solid var(--gray-border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 14px;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .mwallet-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--pink); flex-shrink: 0; margin-top: 4px;
+    }
+    .mwallet-type {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--pink); margin-bottom: 3px;
+    }
+    .mwallet-addr {
+      font-family: 'SF Mono','Fira Code',ui-monospace,monospace;
+      font-size: 12px; color: #444; margin-bottom: 3px;
+    }
+    .mwallet-sub { font-size: 12px; color: var(--gray-text); line-height: 1.4; }
+
+    /* warning block */
+    .warning-block {
+      background: #fff5f5;
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px;
+      padding: 13px 15px; margin-bottom: 14px;
+    }
+    .warning-title {
+      font-size: 13px; font-weight: 700;
+      color: #dc2626; margin-bottom: 8px;
+    }
+    .warning-list {
+      padding-left: 16px; margin: 0;
+    }
+    .warning-list li {
+      font-size: 12px; color: #444;
+      margin-bottom: 5px; line-height: 1.4;
+    }
+    .warning-list li:last-child { margin-bottom: 0; }
+
+    /* checkboxes */
+    .check-row {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 12px; border-radius: 9px; cursor: pointer;
+      border: 1.5px solid var(--gray-border);
+      margin-bottom: 8px;
+      transition: border-color 0.12s, background 0.12s;
+      user-select: none;
+    }
+    .check-row:hover { border-color: #bbb; }
+    .check-row.checked { border-color: var(--pink); background: var(--pink-light); }
+    .checkbox {
+      width: 17px; height: 17px; border-radius: 4px;
+      border: 1.5px solid #ccc; flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: transparent;
+      transition: all 0.12s; background: var(--white);
+    }
+    .check-row.checked .checkbox {
+      background: var(--pink); border-color: var(--pink); color: #fff;
+    }
+    .check-text { font-size: 13px; color: #444; line-height: 1.4; }
+
+    /* modal buttons */
+    .modal-btn {
+      width: 100%; padding: 12px 16px; border-radius: 9px; border: none;
+      font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px;
+      font-family: inherit; transition: all 0.15s;
+    }
+    .modal-btn-black { background: var(--black); color: var(--white); }
+    .modal-btn-black:hover { opacity: 0.85; }
+    .modal-btn-black:disabled { opacity: 0.3; cursor: not-allowed; }
+    .modal-btn-ghost {
+      background: var(--bg);
+      border: 1px solid var(--gray-border);
+      color: var(--gray-text);
+    }
+    .modal-btn-ghost:hover { background: var(--gray-border); color: var(--black); }
+
+    /* back link */
+    .modal-back {
+      font-size: 12px; color: var(--gray-text);
+      cursor: pointer; margin-bottom: 14px;
+      background: none; border: none;
+      padding: 0; font-family: inherit;
+      transition: color 0.12s; display: inline-block;
+    }
+    .modal-back:hover { color: var(--black); }
+
+    /* key display */
+    .key-box {
+      background: #0a0a0a;
+      border-radius: 12px;
+      padding: 16px 18px; margin-bottom: 14px;
+    }
+    .key-box-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #555; margin-bottom: 10px;
+    }
+    .key-value {
+      font-family: 'SF Mono','Fira Code',ui-monospace,monospace;
+      font-size: 11px; color: var(--lime);
+      word-break: break-all; line-height: 1.8;
+      letter-spacing: 0.02em;
+    }
+
+    /* warn note */
+    .modal-warn-note {
+      background: #fff5f5;
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: 8px; padding: 11px 13px; margin-top: 10px;
+      font-size: 12px; color: #7f1d1d; line-height: 1.5;
+    }
+
+    /* step indicator */
+    .modal-steps {
+      display: flex; gap: 6px; margin-bottom: 16px;
+    }
+    .modal-step-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gray-border); transition: background 0.2s;
+    }
+    .modal-step-dot.active { background: var(--pink); }
+    .modal-step-dot.done   { background: var(--black); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-text">XO<br>MARKET</div>
+    <span class="nav-beta">Beta</span>
+  </a>
+  <div class="nav-links">
+    <a href="#">Markets</a>
+    <a href="#">Leaderboard</a>
+    <a href="#">Pulse Markets</a>
+    <a href="#">Parlays <span class="nav-new">NEW</span></a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-deposit">Deposit</button>
+    <button class="nav-icon-btn" style="position:relative;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="notif-badge">1</span>
+    </button>
+    <div class="nav-avatar">
+      <svg viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" fill="#7C5CBF"/>
+        <path d="M11 24c0-4 3-7 7-7s7 3 7 7" fill="#1a1a2e" opacity=".7"/>
+        <circle cx="18" cy="13" r="5" fill="#1a1a2e" opacity=".7"/>
+      </svg>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- E: PROFILE ROW — left card + right PnL module -->
+  <div class="profile-row">
+
+    <!-- LEFT: PROFILE CARD -->
+    <div class="profile-card">
+      <div class="profile-avatar">
+        <svg viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="130" height="130" fill="#7C5CBF"/>
+          <ellipse cx="65" cy="88" rx="26" ry="30" fill="#000"/>
+          <ellipse cx="65" cy="48" rx="16" ry="17" fill="#000"/>
+          <path d="M56 35 Q59 26 62 31 Q65 20 68 27 Q71 16 74 25 Q77 33 72 37 Q64 33 56 35Z" fill="#000"/>
+          <path d="M76 50 L84 48 L76 54Z" fill="#000"/>
+          <ellipse cx="78" cy="56" rx="3.5" ry="4.5" fill="#000"/>
+          <path d="M39 74 Q23 51 30 42 Q37 56 39 74Z" fill="#000"/>
+          <path d="M39 74 Q18 61 26 49 Q35 64 39 74Z" fill="#1a0a30"/>
+          <circle cx="71" cy="46" r="2.2" fill="#7C5CBF"/>
+          <circle cx="71" cy="46" r="1" fill="#fff"/>
+        </svg>
+      </div>
+
+      <div class="profile-info">
+        <!-- Name row -->
+        <div class="profile-name-row">
+          <span class="profile-name">xouser1043</span>
+          <button class="btn-verify">Verify</button>
+          <!-- A: gear icon with dropdown -->
+          <div class="btn-settings" id="settingsBtn" tabindex="0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <div class="settings-dropdown" id="settingsDropdown">
+              <!-- Profile settings -->
+              <button class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Add email
+              </button>
+              <button class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                Add Bio
+              </button>
+              <button class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+                Connect socials (X)
+              </button>
+
+              <div class="dropdown-divider"></div>
+
+              <!-- Wallets section -->
+              <div class="dropdown-section-label">Wallets</div>
+
+              <!-- Smart Account block -->
+              <div class="wallet-block">
+                <div class="wallet-block-header">
+                  <div class="wallet-block-type">
+                    <div class="wallet-dot" style="background:#4ade80;"></div>
+                    <span class="wallet-type-label" style="color:#4ade80;">Smart Account</span>
+                  </div>
+                </div>
+                <div class="wallet-addr">0x9c7d…a4f2</div>
+                <div class="wallet-desc">Holds your XO balance. This is your on-chain identity.</div>
+                <div class="wallet-actions-row">
+                  <button class="wallet-copy-btn" onclick="copyWallet(this,'0x9c7dfa3ba4f2')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy address
+                  </button>
+                </div>
+              </div>
+
+              <!-- Embedded Wallet block -->
+              <div class="wallet-block" style="margin-bottom:10px;">
+                <div class="wallet-block-header">
+                  <div class="wallet-block-type">
+                    <div class="wallet-dot" style="background:var(--pink);"></div>
+                    <span class="wallet-type-label" style="color:var(--pink);">Embedded Wallet</span>
+                  </div>
+                </div>
+                <div class="wallet-addr">0x43af…00de</div>
+                <div class="wallet-desc">Your self-custody key. Export to take full ownership outside XO.</div>
+                <div class="wallet-actions-row">
+                  <button class="wallet-copy-btn" onclick="copyWallet(this,'0x43af5d00de9')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy address
+                  </button>
+                  <button class="wallet-export-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export private key
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B: badges row — smaller, moved inside profile-info -->
+        <div class="badges-row">
+          <div class="badge">🚫</div>
+          <div class="badge">⭕</div>
+          <div class="badge active-fire">🔥</div>
+          <div class="badge">🛡️</div>
+          <div class="badge">💫</div>
+          <div class="badge">🏆</div>
+          <div class="badge active">🎯</div>
+        </div>
+
+        <!-- Meta -->
+        <div class="profile-meta">
+          <div>
+            <div class="meta-label">Conviction Points</div>
+            <div class="conviction-row">
+              <div class="conviction-icon">🟢</div>
+              <span class="conviction-val">0</span>
+            </div>
+          </div>
+          <div>
+            <div class="meta-label">Referral Code</div>
+            <div class="referral-row">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style="opacity:.4;">
+                <rect x="2" y="2" width="16" height="16" rx="4" stroke="#888" stroke-width="1.5"/>
+                <path d="M6 10h8M10 6v8" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span class="referral-code">XO-XOUSER1043-AABB</span>
+              <button class="btn-copy" title="Copy">⧉</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: F — PnL MODULE -->
+    <div class="pnl-card">
+      <div class="pnl-header">
+        <span class="pnl-title">Profit / Loss</span>
+        <div class="pnl-timefilters">
+          <button class="pnl-tf" onclick="setTf(this)">1D</button>
+          <button class="pnl-tf" onclick="setTf(this)">1W</button>
+          <button class="pnl-tf" onclick="setTf(this)">1M</button>
+          <button class="pnl-tf active" onclick="setTf(this)">ALL</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="pnl-value-row">
+          <span class="pnl-value">$0.00</span>
+          <span class="pnl-approx">≈</span>
+        </div>
+        <div class="pnl-period">All-time</div>
+      </div>
+
+      <!-- flat chart (no data) -->
+      <div class="pnl-chart">
+        <svg viewBox="0 0 256 64" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FF5BA7" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#FF5BA7" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 48 L256 48" stroke="#E5E5E5" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <path d="M0 48 C40 48 80 48 128 48 C176 48 216 48 256 48" stroke="#FF5BA7" stroke-width="2" fill="none"/>
+          <path d="M0 48 C40 48 80 48 128 48 C176 48 216 48 256 48 L256 64 L0 64 Z" fill="url(#chartGrad)"/>
+        </svg>
+      </div>
+
+      <div class="pnl-compare">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Polymarket
+      </div>
+    </div>
+
+  </div><!-- /profile-row -->
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Profit</div>
+      <div class="stat-value">$0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Volume Traded</div>
+      <div class="stat-value">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Markets Traded</div>
+      <div class="stat-value">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Markets Won</div>
+      <div class="stat-value">0</div>
+    </div>
+  </div>
+
+  <!-- TABS + TOOLBAR (tabs without "My" prefix) -->
+  <div class="tabs-toolbar">
+    <div class="tabs">
+      <button class="tab active" data-tab="portfolio">Portfolio</button>
+      <button class="tab" data-tab="markets">Markets</button>
+      <button class="tab" data-tab="activity">Activity</button>
+    </div>
+    <div class="toolbar">
+      <!-- Active / Closed sub-filter -->
+      <div class="sub-filter">
+        <button class="sub-tab active" onclick="setSubTab(this)">Active</button>
+        <button class="sub-tab" onclick="setSubTab(this)">Closed</button>
+      </div>
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" placeholder="Search for position" />
+      </div>
+      <button class="btn-filter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+      </button>
+      <button class="btn-create">+ Create Conviction</button>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO BODY -->
+  <div class="portfolio-body">
+    <div class="portfolio-toolbar">
+      <span class="unclaimed-text">You have 0 unclaimed markets</span>
+      <button class="btn-claim">Claim all</button>
+    </div>
+    <div class="table-header">
+      <div class="th">Markets</div>
+      <div class="th">Total stake</div>
+      <div class="th">PnL</div>
+      <div class="th">Status</div>
+      <div class="th">Actions</div>
+    </div>
+    <div class="empty-state">
+      <p>No positions found</p>
+      <span>Your portfolio positions will appear here</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPORT PRIVATE KEY MODAL -->
+<div class="modal-bg" id="exportModal" style="display:none;" onclick="handleModalBgClick(event)">
+  <div class="export-modal" onclick="event.stopPropagation()">
+
+    <!-- STEP 0: Warning + confirmations -->
+    <div id="exportStep0">
+      <div class="modal-header">
+        <div>
+          <div class="modal-eyebrow">Advanced · Irreversible</div>
+          <div class="modal-title">Export private key</div>
+        </div>
+        <button class="modal-close" onclick="closeExportModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-steps">
+          <div class="modal-step-dot active" id="dot0"></div>
+          <div class="modal-step-dot" id="dot1"></div>
+        </div>
+
+        <!-- Wallet reference -->
+        <div class="mwallet-ref">
+          <div class="mwallet-dot"></div>
+          <div>
+            <div class="mwallet-type">Embedded Wallet</div>
+            <div class="mwallet-addr">0x43af5d…00de</div>
+            <div class="mwallet-sub">This key gives full control over this wallet and any funds inside it.</div>
+          </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="warning-block">
+          <div class="warning-title">🚨 This gives full access to funds</div>
+          <ul class="warning-list">
+            <li>Anyone who has this key can drain this wallet — immediately and irreversibly</li>
+            <li>If you lose this key, no one can recover it — not even XO</li>
+            <li>Never share it, screenshot it, or store it in a messaging app</li>
+          </ul>
+        </div>
+
+        <!-- Acknowledgement checkboxes -->
+        <div class="check-row" id="check0" onclick="toggleCheck(0)">
+          <div class="checkbox" id="cb0"></div>
+          <span class="check-text">I understand anyone with this key can access all funds in this wallet</span>
+        </div>
+        <div class="check-row" id="check1" onclick="toggleCheck(1)">
+          <div class="checkbox" id="cb1"></div>
+          <span class="check-text">I understand this key cannot be recovered if lost</span>
+        </div>
+
+        <button class="modal-btn modal-btn-black" id="continueBtn" disabled onclick="goToStep1()">Continue</button>
+        <button class="modal-btn modal-btn-ghost" onclick="closeExportModal()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- STEP 1: Key reveal -->
+    <div id="exportStep1" style="display:none;">
+      <div class="modal-header">
+        <div>
+          <div class="modal-eyebrow" style="color:var(--gray-text);">Embedded Wallet · Private Key</div>
+          <div class="modal-title">Your private key</div>
+        </div>
+        <button class="modal-close" onclick="closeExportModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-steps">
+          <div class="modal-step-dot done"></div>
+          <div class="modal-step-dot active"></div>
+        </div>
+
+        <button class="modal-back" onclick="goToStep0()">← Back</button>
+
+        <p style="font-size:13px;color:#555;margin-bottom:16px;line-height:1.6;">
+          Write this down or save it in a password manager.
+          <strong style="color:var(--black);">Do not screenshot it.</strong>
+        </p>
+
+        <!-- Key display -->
+        <div class="key-box">
+          <div class="key-box-label">Private Key · Embedded Wallet</div>
+          <div class="key-value" id="keyValue">3a7f92bc1d4e8f0a6b2c9d5e1f3a7f92bc1d4e8f0a6b2c9d5e1f3a7f92bc1d4e</div>
+        </div>
+
+        <button class="modal-btn modal-btn-ghost" id="copyKeyBtn" onclick="copyKey()">Copy key</button>
+        <button class="modal-btn modal-btn-black" onclick="closeExportModal()">I've saved it — close</button>
+
+        <div class="modal-warn-note">
+          ⚠ After closing this screen your key will not be shown again without re-authentication.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Gear dropdown toggle
+  const settingsBtn = document.getElementById('settingsBtn');
+  settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsBtn.classList.toggle('open');
+  });
+  document.addEventListener('click', () => settingsBtn.classList.remove('open'));
+  document.getElementById('settingsDropdown').addEventListener('click', e => e.stopPropagation());
+
+  // Main tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // PnL time filters
+  function setTf(el) {
+    el.closest('.pnl-timefilters').querySelectorAll('.pnl-tf').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Active/Closed sub-filter
+  function setSubTab(el) {
+    el.closest('.sub-filter').querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Copy wallet address
+  function copyWallet(btn, addr) {
+    navigator.clipboard.writeText(addr).catch(() => {});
+    btn.classList.add('copied');
+    const orig = btn.innerHTML;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 2000);
+  }
+
+  // ── Export private key modal ──
+  const checks = [false, false];
+
+  function openExportModal() {
+    // reset state every open
+    checks[0] = false; checks[1] = false;
+    ['check0','check1'].forEach((id,i) => {
+      document.getElementById(id).classList.remove('checked');
+      document.getElementById('cb' + i).textContent = '';
+    });
+    document.getElementById('continueBtn').disabled = true;
+    document.getElementById('exportStep0').style.display = 'block';
+    document.getElementById('exportStep1').style.display = 'none';
+    document.getElementById('copyKeyBtn').textContent = 'Copy key';
+    document.getElementById('exportModal').style.display = 'flex';
+    settingsBtn.classList.remove('open');
+  }
+
+  function closeExportModal() {
+    document.getElementById('exportModal').style.display = 'none';
+  }
+
+  function handleModalBgClick(e) {
+    if (e.target === document.getElementById('exportModal')) closeExportModal();
+  }
+
+  function toggleCheck(i) {
+    checks[i] = !checks[i];
+    const row = document.getElementById('check' + i);
+    const cb  = document.getElementById('cb' + i);
+    row.classList.toggle('checked', checks[i]);
+    cb.textContent = checks[i] ? '✓' : '';
+    document.getElementById('continueBtn').disabled = !(checks[0] && checks[1]);
+  }
+
+  function goToStep1() {
+    document.getElementById('exportStep0').style.display = 'none';
+    document.getElementById('exportStep1').style.display = 'block';
+  }
+
+  function goToStep0() {
+    document.getElementById('exportStep1').style.display = 'none';
+    document.getElementById('exportStep0').style.display = 'block';
+  }
+
+  function copyKey() {
+    const key = document.getElementById('keyValue').textContent;
+    navigator.clipboard.writeText(key).catch(() => {});
+    const btn = document.getElementById('copyKeyBtn');
+    btn.textContent = '✓ Copied — store it safely';
+    btn.style.color = '#16a34a';
+    btn.style.borderColor = 'rgba(34,197,94,0.35)';
+    setTimeout(() => {
+      btn.textContent = 'Copy key';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 3000);
+  }
+
+  // Wire the export button in the dropdown
+  document.querySelector('.wallet-export-btn').addEventListener('click', openExportModal);
+</script>
+</body>
+</html>

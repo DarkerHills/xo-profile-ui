@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XO Market – Profile UI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #000; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; padding: 60px 24px; }
+    .logo { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; }
+    .logo span { color: #FF5BA7; }
+    .tagline { font-size: 14px; color: #666; letter-spacing: 0.04em; text-transform: uppercase; }
+    .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+    .card {
+      display: flex; flex-direction: column; gap: 12px;
+      background: #111; border: 1px solid #222;
+      border-radius: 16px; padding: 28px 32px;
+      text-decoration: none; color: inherit;
+      width: 260px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { border-color: #FF5BA7; transform: translateY(-2px); }
+    .card-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #FF5BA7; }
+    .card-title { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+    .card-desc { font-size: 13px; color: #666; line-height: 1.5; }
+    .card-arrow { font-size: 20px; color: #333; margin-top: 4px; transition: color 0.2s; }
+    .card:hover .card-arrow { color: #FF5BA7; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="logo">XO<span>.</span>MARKET</div>
+  </div>
+  <div class="tagline">Profile UI Explorations</div>
+  <div class="cards">
+    <a href="xo-profile.html" class="card">
+      <div class="card-tag">Version 1</div>
+      <div class="card-title">Profile — Current</div>
+      <div class="card-desc">Split layout with PnL module, gear settings, wallet export flow, and Active/Closed filter.</div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a href="xo-profile-explorations.html" class="card">
+      <div class="card-tag">Version 2</div>
+      <div class="card-title">Profile — Explorations</div>
+      <div class="card-desc">Two alternate directions: Dashboard Sidebar (A) and Social Hero (B), each with bio + email.</div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+</body>
+</html>

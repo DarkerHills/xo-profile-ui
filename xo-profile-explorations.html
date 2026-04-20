@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XO Market – Profile Explorations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --white:       #FFFFFF;
+      --bg:          #F5F5F5;
+      --black:       #000000;
+      --pink:        #FF5BA7;
+      --pink-light:  #FFE4EC;
+      --lime:        #C8FF00;
+      --gray-text:   #888888;
+      --gray-border: #E5E5E5;
+      --green:       #22C55E;
+    }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #e8e8e8; color: var(--black); }
+
+    /* ── SWITCHER ── */
+    .switcher {
+      position: sticky; top: 0; z-index: 999;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 12px 24px;
+    }
+    .switcher-label { color: #666; font-size: 12px; font-weight: 600; margin-right: 8px; }
+    .sw-btn {
+      background: transparent;
+      border: 1.5px solid #333;
+      color: #888;
+      font-size: 13px; font-weight: 700;
+      padding: 7px 22px; border-radius: 99px;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.15s;
+    }
+    .sw-btn.active { background: var(--white); border-color: var(--white); color: var(--black); }
+    .sw-btn:not(.active):hover { border-color: #555; color: #ccc; }
+
+    /* ── EXPLORATION WRAPPER ── */
+    .exploration { display: none; }
+    .exploration.visible { display: block; }
+    .exp-label {
+      background: var(--black);
+      color: #444;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center; padding: 10px;
+    }
+    .exp-label span { color: var(--white); }
+
+    /* ════════════════════════════════════════════════════════
+       EXPLORATION A  —  "Dashboard Sidebar"
+       Left column: profile identity + wallet + stats stacked
+       Right panel: full-height PnL + portfolio
+    ════════════════════════════════════════════════════════ */
+
+    .expA { background: var(--bg); min-height: 100vh; }
+
+    /* Nav */
+    .expA nav {
+      background: var(--black);
+      display: flex; align-items: center;
+      padding: 0 28px; height: 60px; gap: 36px;
+    }
+    .expA .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .expA .nav-logo-text { font-size: 16px; font-weight: 900; color: var(--white); line-height: 1; letter-spacing: -0.02em; }
+    .expA .nav-beta { background: var(--pink); color: var(--white); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 99px; }
+    .expA .nav-links { display: flex; gap: 28px; flex: 1; }
+    .expA .nav-links a { color: #888; text-decoration: none; font-size: 13px; font-weight: 500; }
+    .expA .nav-links a:hover { color: var(--white); }
+    .expA .nav-new { background: var(--lime); color: var(--black); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 99px; margin-left: 3px; }
+    .expA .nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .expA .btn-deposit {
+      background: var(--pink); color: var(--white); border: none;
+      border-radius: 8px; font-size: 13px; font-weight: 700;
+      padding: 8px 16px; cursor: pointer; display: flex; align-items: center; gap: 5px;
+    }
+    .expA .nav-avatar {
+      width: 32px; height: 32px; border-radius: 50%; overflow: hidden; cursor: pointer;
+    }
+    .expA .notif-btn { position: relative; background: none; border: none; color: #888; cursor: pointer; }
+    .expA .notif-btn svg { width: 18px; height: 18px; }
+    .expA .notif-dot { position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: var(--pink); border-radius: 50%; border: 2px solid var(--black); }
+
+    /* Layout */
+    .expA .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* Sidebar */
+    .expA .sidebar {
+      background: var(--white);
+      border-right: 1px solid var(--gray-border);
+      display: flex; flex-direction: column;
+      padding: 24px 20px;
+      gap: 20px;
+    }
+
+    /* Avatar block */
+    .expA .sidebar-avatar {
+      width: 72px; height: 72px; border-radius: 12px;
+      background: #7C5CBF; overflow: hidden; flex-shrink: 0;
+    }
+    .expA .sidebar-avatar svg { width: 72px; height: 72px; display: block; }
+
+    .expA .sidebar-identity { display: flex; flex-direction: column; gap: 8px; }
+    .expA .sidebar-name-row { display: flex; align-items: center; gap: 8px; }
+    .expA .sidebar-name { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+    .expA .sidebar-email {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; color: var(--gray-text); font-weight: 500;
+    }
+    .expA .sidebar-email svg { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.5; }
+    .expA .sidebar-email .email-add {
+      color: var(--pink); font-weight: 600; cursor: pointer;
+      background: none; border: none; font-size: 12px; font-family: inherit; padding: 0;
+    }
+    .expA .sidebar-bio {
+      font-size: 12px; color: #666; line-height: 1.5;
+      padding: 8px 10px; background: var(--bg);
+      border-radius: 7px; border: 1px solid var(--gray-border);
+    }
+    .expA .sidebar-bio.empty {
+      color: var(--gray-text); font-style: italic;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .expA .sidebar-bio.empty:hover { border-color: #bbb; }
+    .expA .badge-verify {
+      background: var(--pink); color: var(--white);
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .expA .sidebar-badges {
+      display: flex; gap: 5px; flex-wrap: wrap;
+    }
+    .expA .s-badge {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 1.5px solid var(--gray-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; opacity: 0.3;
+    }
+    .expA .s-badge.on { opacity: 1; border-color: var(--pink); background: var(--pink-light); }
+    .expA .s-badge.fire { opacity: 1; background: #FFF0E0; border-color: #FF8C42; }
+
+    /* Sidebar divider */
+    .expA .s-divider { height: 1px; background: var(--gray-border); }
+
+    /* Stats stacked */
+    .expA .sidebar-stats { display: flex; flex-direction: column; gap: 4px; }
+    .expA .s-stat {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-radius: 8px; background: var(--bg);
+    }
+    .expA .s-stat-label { font-size: 11px; font-weight: 600; color: var(--gray-text); }
+    .expA .s-stat-val { font-size: 16px; font-weight: 800; }
+
+    /* Conviction + referral */
+    .expA .sidebar-meta { display: flex; flex-direction: column; gap: 10px; }
+    .expA .meta-row { display: flex; flex-direction: column; gap: 4px; }
+    .expA .meta-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray-text); }
+    .expA .meta-val { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .expA .conv-dot { width: 14px; height: 14px; background: var(--green); border-radius: 50%; }
+    .expA .ref-mono { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+    .expA .copy-icon { background: none; border: none; cursor: pointer; color: var(--gray-text); font-size: 12px; }
+
+    /* Wallet blocks in sidebar */
+    .expA .sidebar-wallets { display: flex; flex-direction: column; gap: 6px; }
+    .expA .s-wallet-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-text); margin-bottom: 2px; }
+    .expA .s-wallet-block {
+      background: var(--bg); border: 1px solid var(--gray-border);
+      border-radius: 8px; padding: 9px 11px;
+    }
+    .expA .s-wallet-type {
+      display: flex; align-items: center; gap: 5px; margin-bottom: 3px;
+    }
+    .expA .s-wdot { width: 6px; height: 6px; border-radius: 50%; }
+    .expA .s-wtype { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+    .expA .s-waddr { font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: #555; margin-bottom: 6px; }
+    .expA .s-wactions { display: flex; align-items: center; justify-content: space-between; }
+    .expA .s-wcopy {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 5px; font-size: 10px; font-weight: 600;
+      padding: 3px 8px; cursor: pointer; font-family: inherit; color: var(--black);
+    }
+    .expA .s-wexport { background: none; border: none; font-size: 10px; font-weight: 600; color: var(--pink); cursor: pointer; font-family: inherit; }
+
+    /* Main panel */
+    .expA .main {
+      display: flex; flex-direction: column;
+      padding: 24px; gap: 16px;
+    }
+
+    /* PnL + tabs row */
+    .expA .top-row { display: grid; grid-template-columns: 1fr 280px; gap: 16px; }
+
+    /* PnL card */
+    .expA .pnl-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 14px; padding: 20px 22px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .expA .pnl-top { display: flex; align-items: center; justify-content: space-between; }
+    .expA .pnl-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-text); }
+    .expA .pnl-filters { display: flex; gap: 2px; }
+    .expA .ptf {
+      background: none; border: none; font-size: 11px; font-weight: 600;
+      color: var(--gray-text); padding: 3px 8px; border-radius: 5px; cursor: pointer; font-family: inherit;
+    }
+    .expA .ptf.on { background: var(--black); color: var(--white); }
+    .expA .pnl-val { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; }
+    .expA .pnl-period { font-size: 11px; color: var(--gray-text); margin-top: -4px; }
+    .expA .pnl-chart { height: 56px; }
+    .expA .pnl-chart svg { width: 100%; height: 100%; }
+    .expA .pnl-compare { font-size: 11px; color: var(--gray-text); display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+
+    /* Minimap stat card (top-right) */
+    .expA .quick-actions {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .expA .qa-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 12px; padding: 14px 16px; flex: 1;
+    }
+    .expA .qa-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray-text); margin-bottom: 4px; }
+    .expA .qa-val { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+
+    /* Portfolio section */
+    .expA .portfolio-section { background: var(--white); border: 1px solid var(--gray-border); border-radius: 14px; overflow: hidden; }
+    .expA .port-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--gray-border);
+    }
+    .expA .port-tabs { display: flex; gap: 0; }
+    .expA .port-tab {
+      font-size: 14px; font-weight: 600; padding: 6px 16px 6px 0;
+      background: none; border: none; color: var(--gray-text);
+      border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit;
+    }
+    .expA .port-tab.on { color: var(--black); border-bottom-color: var(--black); }
+    .expA .port-tab:not(:first-child) { padding-left: 16px; }
+    .expA .port-right { display: flex; align-items: center; gap: 8px; }
+    .expA .filter-chips { display: flex; gap: 5px; }
+    .expA .chip {
+      background: none; border: 1.5px solid var(--gray-border);
+      font-size: 11px; font-weight: 700; padding: 5px 14px;
+      border-radius: 99px; cursor: pointer; color: var(--gray-text); font-family: inherit;
+    }
+    .expA .chip.on { border-color: var(--black); color: var(--black); background: var(--white); }
+    .expA .search-box {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg); border: 1px solid var(--gray-border);
+      border-radius: 7px; padding: 7px 12px;
+    }
+    .expA .search-box input { border: none; outline: none; font-size: 13px; font-family: inherit; background: transparent; color: var(--black); width: 160px; }
+    .expA .search-box input::placeholder { color: var(--gray-text); }
+    .expA .btn-create {
+      background: var(--black); color: var(--white); border: none;
+      border-radius: 7px; font-size: 13px; font-weight: 700; padding: 8px 16px;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .expA .port-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px; background: var(--bg); border-bottom: 1px solid var(--gray-border);
+      font-size: 13px;
+    }
+    .expA .btn-claim {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 6px; font-size: 12px; font-weight: 600;
+      padding: 5px 14px; cursor: pointer; font-family: inherit;
+    }
+    .expA .table-head {
+      display: grid; grid-template-columns: 1fr 150px 110px 110px 110px;
+      padding: 10px 20px; border-bottom: 1px solid var(--gray-border);
+    }
+    .expA .th { font-size: 11px; font-weight: 600; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.05em; }
+    .expA .empty { display: flex; flex-direction: column; align-items: center; padding: 56px 20px; gap: 6px; }
+    .expA .empty p { font-size: 14px; font-weight: 600; }
+    .expA .empty span { font-size: 12px; color: var(--gray-text); }
+
+
+    /* ════════════════════════════════════════════════════════
+       EXPLORATION B  —  "Social Hero"
+       Full-width banner, centered identity, horizontal stats bar,
+       bold use of pink + lime accents
+    ════════════════════════════════════════════════════════ */
+
+    .expB { background: var(--bg); min-height: 100vh; }
+
+    /* Nav */
+    .expB nav {
+      background: var(--black);
+      display: flex; align-items: center;
+      padding: 0 32px; height: 60px; gap: 36px;
+    }
+    .expB .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .expB .nav-logo-text { font-size: 16px; font-weight: 900; color: var(--white); line-height: 1; letter-spacing: -0.02em; }
+    .expB .nav-beta { background: var(--pink); color: var(--white); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 99px; }
+    .expB .nav-links { display: flex; gap: 28px; flex: 1; }
+    .expB .nav-links a { color: #888; text-decoration: none; font-size: 13px; font-weight: 500; }
+    .expB .nav-links a:hover { color: var(--white); }
+    .expB .nav-new { background: var(--lime); color: var(--black); font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 99px; margin-left: 3px; }
+    .expB .nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .expB .btn-deposit {
+      background: var(--pink); color: var(--white); border: none;
+      border-radius: 8px; font-size: 13px; font-weight: 700;
+      padding: 8px 16px; cursor: pointer; display: flex; align-items: center; gap: 5px;
+    }
+    .expB .nav-avatar { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; cursor: pointer; }
+    .expB .notif-btn { position: relative; background: none; border: none; color: #888; cursor: pointer; }
+    .expB .notif-btn svg { width: 18px; height: 18px; }
+    .expB .notif-dot { position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: var(--pink); border-radius: 50%; border: 2px solid var(--black); }
+
+    /* Hero banner */
+    .expB .hero {
+      position: relative; overflow: hidden;
+      background: var(--black);
+      height: 180px;
+    }
+    .expB .hero-pattern {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 15% 50%, rgba(255,91,167,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 85% 30%, rgba(200,255,0,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 60% at 50% 100%, rgba(124,92,191,0.2) 0%, transparent 70%);
+    }
+    /* subtle grid */
+    .expB .hero-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* Identity card — overlaps hero bottom */
+    .expB .identity-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 0 28px;
+      position: relative;
+      margin-top: -56px;
+    }
+    .expB .identity-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 18px; padding: 0;
+      overflow: hidden;
+    }
+
+    /* Top part: avatar + name + actions */
+    .expB .identity-top {
+      display: flex; align-items: flex-end; gap: 20px;
+      padding: 20px 24px 20px;
+    }
+    .expB .b-avatar {
+      width: 100px; height: 100px; border-radius: 16px;
+      background: #7C5CBF; overflow: hidden; flex-shrink: 0;
+      border: 4px solid var(--white);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      margin-top: -50px; /* lift out of card top */
+    }
+    .expB .b-avatar svg { width: 100px; height: 100px; display: block; }
+
+    .expB .identity-mid { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .expB .b-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .expB .b-bio {
+      font-size: 13px; color: #555; line-height: 1.5; max-width: 480px;
+    }
+    .expB .b-bio.empty {
+      color: var(--gray-text); font-style: italic; cursor: pointer;
+    }
+    /* Email pill in info-card */
+    .expB .email-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg); border: 1px solid var(--gray-border);
+      border-radius: 8px; padding: 9px 12px;
+    }
+    .expB .email-pill svg { width: 13px; height: 13px; color: var(--gray-text); flex-shrink: 0; }
+    .expB .email-pill span { font-size: 12px; color: var(--gray-text); flex: 1; }
+    .expB .email-pill .ep-add {
+      background: none; border: none; font-size: 11px; font-weight: 700;
+      color: var(--pink); cursor: pointer; font-family: inherit; padding: 0;
+    }
+    .expB .b-name { font-size: 22px; font-weight: 900; letter-spacing: -0.03em; }
+    .expB .b-verify {
+      background: var(--pink); color: var(--white);
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 7px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .expB .b-badges { display: flex; gap: 5px; }
+    .expB .b-badge {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1.5px solid var(--gray-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; opacity: 0.3;
+    }
+    .expB .b-badge.on { opacity: 1; border-color: var(--pink); background: var(--pink-light); }
+    .expB .b-badge.fire { opacity: 1; background: #FFF0E0; border-color: #FF8C42; }
+
+    .expB .identity-actions { display: flex; align-items: flex-end; gap: 8px; padding-bottom: 2px; }
+    .expB .b-gear {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: none; border: 1.5px solid var(--gray-border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--gray-text);
+    }
+    .expB .b-gear svg { width: 16px; height: 16px; }
+
+    /* Stats bar — horizontal strip */
+    .expB .stats-bar {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--gray-border);
+    }
+    .expB .stat-cell {
+      padding: 16px 20px;
+      border-right: 1px solid var(--gray-border);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .expB .stat-cell:last-child { border-right: none; }
+    .expB .sc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray-text); }
+    .expB .sc-val { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+    /* conviction cell gets green tint */
+    .expB .stat-cell.conviction { background: #f0fdf4; }
+    .expB .stat-cell.conviction .sc-val { color: #16a34a; font-size: 18px; display: flex; align-items: center; gap: 6px; }
+    .expB .cv-dot { width: 10px; height: 10px; background: var(--green); border-radius: 50%; }
+
+    /* Page body */
+    .expB .page { max-width: 900px; margin: 0 auto; padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* 2-col: PnL + referral/wallet */
+    .expB .mid-row { display: grid; grid-template-columns: 1fr 260px; gap: 16px; }
+
+    .expB .pnl-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 14px; padding: 20px 22px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .expB .pnl-top { display: flex; align-items: center; justify-content: space-between; }
+    .expB .pnl-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-text); }
+    .expB .pnl-filters { display: flex; gap: 2px; }
+    .expB .ptf { background: none; border: none; font-size: 11px; font-weight: 600; color: var(--gray-text); padding: 3px 8px; border-radius: 5px; cursor: pointer; font-family: inherit; }
+    .expB .ptf.on { background: var(--black); color: var(--white); }
+    .expB .pnl-val { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; }
+    .expB .pnl-period { font-size: 11px; color: var(--gray-text); margin-top: -4px; }
+    .expB .pnl-chart { height: 52px; }
+    .expB .pnl-chart svg { width: 100%; height: 100%; }
+    .expB .pnl-compare { font-size: 11px; color: var(--gray-text); display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+
+    /* Right info card */
+    .expB .info-card {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 14px; padding: 18px 18px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .expB .ic-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-text); }
+    .expB .referral-pill {
+      background: var(--bg); border: 1px solid var(--gray-border);
+      border-radius: 8px; padding: 10px 12px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .expB .ref-code { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+    .expB .ref-copy { background: none; border: none; cursor: pointer; color: var(--gray-text); font-size: 14px; }
+    .expB .ic-divider { height: 1px; background: var(--gray-border); }
+
+    /* Wallet mini blocks in info card */
+    .expB .ic-wallet {
+      background: var(--bg); border: 1px solid var(--gray-border);
+      border-radius: 8px; padding: 9px 11px; margin-top: 2px;
+    }
+    .expB .ic-wallet + .expB .ic-wallet { margin-top: 6px; }
+    .expB .icw-header { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+    .expB .icw-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .expB .icw-type { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+    .expB .icw-addr { font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: #555; margin-bottom: 5px; }
+    .expB .icw-actions { display: flex; align-items: center; justify-content: space-between; }
+    .expB .icw-copy { display: flex; align-items: center; gap: 4px; background: var(--white); border: 1px solid var(--gray-border); border-radius: 5px; font-size: 10px; font-weight: 600; padding: 3px 8px; cursor: pointer; font-family: inherit; color: var(--black); }
+    .expB .icw-export { background: none; border: none; font-size: 10px; font-weight: 600; color: var(--pink); cursor: pointer; font-family: inherit; }
+
+    /* Portfolio */
+    .expB .portfolio {
+      background: var(--white); border: 1px solid var(--gray-border); border-radius: 14px; overflow: hidden;
+    }
+    .expB .port-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--gray-border);
+    }
+    .expB .port-tabs { display: flex; }
+    .expB .p-tab {
+      font-size: 14px; font-weight: 600; padding: 4px 16px 4px 0;
+      background: none; border: none; color: var(--gray-text);
+      border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit;
+    }
+    .expB .p-tab.on { color: var(--black); border-bottom-color: var(--black); }
+    .expB .p-tab:not(:first-child) { padding-left: 16px; }
+    .expB .port-controls { display: flex; align-items: center; gap: 8px; }
+    .expB .filter-pills { display: flex; gap: 5px; }
+    .expB .fpill {
+      background: none; border: 1.5px solid var(--gray-border);
+      font-size: 11px; font-weight: 700; padding: 5px 14px;
+      border-radius: 99px; cursor: pointer; color: var(--gray-text); font-family: inherit;
+    }
+    .expB .fpill.on { border-color: var(--black); color: var(--black); }
+    .expB .b-search {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg); border: 1px solid var(--gray-border);
+      border-radius: 7px; padding: 7px 12px;
+    }
+    .expB .b-search input { border: none; outline: none; font-size: 13px; font-family: inherit; background: transparent; color: var(--black); width: 150px; }
+    .expB .b-search input::placeholder { color: var(--gray-text); }
+    .expB .b-create { background: var(--black); color: var(--white); border: none; border-radius: 7px; font-size: 13px; font-weight: 700; padding: 8px 16px; cursor: pointer; font-family: inherit; }
+    .expB .port-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--bg); border-bottom: 1px solid var(--gray-border); font-size: 13px; }
+    .expB .b-claim { background: var(--white); border: 1px solid var(--gray-border); border-radius: 6px; font-size: 12px; font-weight: 600; padding: 5px 14px; cursor: pointer; font-family: inherit; }
+    .expB .table-head { display: grid; grid-template-columns: 1fr 150px 110px 110px 110px; padding: 10px 20px; border-bottom: 1px solid var(--gray-border); }
+    .expB .th { font-size: 11px; font-weight: 600; color: var(--gray-text); text-transform: uppercase; letter-spacing: 0.05em; }
+    .expB .empty { display: flex; flex-direction: column; align-items: center; padding: 56px 20px; gap: 6px; }
+    .expB .empty p { font-size: 14px; font-weight: 600; }
+    .expB .empty span { font-size: 12px; color: var(--gray-text); }
+
+    /* ── EXPORT MODAL (shared) ── */
+    .modal-bg {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      animation: fadeBg .18s ease;
+    }
+    @keyframes fadeBg { from{opacity:0} to{opacity:1} }
+    .export-modal {
+      background: var(--white); border: 1px solid var(--gray-border);
+      border-radius: 18px; width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      animation: modalUp .22s ease; overflow: hidden;
+    }
+    @keyframes modalUp { from{opacity:0;transform:translateY(12px) scale(.97)} to{opacity:1;transform:none} }
+    .m-header { padding: 22px 22px 0; display: flex; align-items: flex-start; justify-content: space-between; }
+    .m-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; color: #ef4444; }
+    .m-eyebrow.neutral { color: var(--gray-text); }
+    .m-title { font-size: 18px; font-weight: 800; letter-spacing: -0.03em; }
+    .m-close { background: var(--bg); border: 1px solid var(--gray-border); border-radius: 6px; padding: 4px 11px; font-size: 13px; cursor: pointer; color: var(--gray-text); font-family: inherit; }
+    .m-close:hover { background: var(--gray-border); color: var(--black); }
+    .m-body { padding: 18px 22px 22px; }
+    .m-steps { display: flex; gap: 6px; margin-bottom: 16px; }
+    .m-step { width: 6px; height: 6px; border-radius: 50%; background: var(--gray-border); transition: background .2s; }
+    .m-step.active { background: var(--pink); }
+    .m-step.done   { background: var(--black); }
+    .mw-ref { background: var(--bg); border: 1px solid var(--gray-border); border-radius: 10px; padding: 11px 14px; margin-bottom: 14px; display: flex; gap: 10px; }
+    .mw-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--pink); flex-shrink: 0; margin-top: 4px; }
+    .mw-type { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--pink); margin-bottom: 3px; }
+    .mw-addr { font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; color: #444; margin-bottom: 3px; }
+    .mw-sub { font-size: 12px; color: var(--gray-text); line-height: 1.4; }
+    .warn-block { background: #fff5f5; border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; padding: 13px 15px; margin-bottom: 14px; }
+    .warn-title { font-size: 13px; font-weight: 700; color: #dc2626; margin-bottom: 8px; }
+    .warn-list { padding-left: 16px; margin: 0; }
+    .warn-list li { font-size: 12px; color: #444; margin-bottom: 5px; line-height: 1.4; }
+    .warn-list li:last-child { margin-bottom: 0; }
+    .c-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 9px; cursor: pointer; border: 1.5px solid var(--gray-border); margin-bottom: 8px; user-select: none; transition: border-color .12s, background .12s; }
+    .c-row:hover { border-color: #bbb; }
+    .c-row.on { border-color: var(--pink); background: var(--pink-light); }
+    .c-box { width: 17px; height: 17px; border-radius: 4px; border: 1.5px solid #ccc; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: transparent; transition: all .12s; background: var(--white); }
+    .c-row.on .c-box { background: var(--pink); border-color: var(--pink); color: #fff; }
+    .c-text { font-size: 13px; color: #444; line-height: 1.4; }
+    .m-btn { width: 100%; padding: 12px 16px; border-radius: 9px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; font-family: inherit; transition: all .15s; }
+    .m-btn-black { background: var(--black); color: var(--white); }
+    .m-btn-black:hover { opacity: .85; }
+    .m-btn-black:disabled { opacity: .3; cursor: not-allowed; }
+    .m-btn-ghost { background: var(--bg); border: 1px solid var(--gray-border); color: var(--gray-text); }
+    .m-btn-ghost:hover { background: var(--gray-border); color: var(--black); }
+    .m-back { font-size: 12px; color: var(--gray-text); cursor: pointer; margin-bottom: 14px; background: none; border: none; padding: 0; font-family: inherit; display: inline-block; }
+    .m-back:hover { color: var(--black); }
+    .key-box { background: #0a0a0a; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+    .key-box-lbl { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #555; margin-bottom: 10px; }
+    .key-val { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: var(--lime); word-break: break-all; line-height: 1.8; letter-spacing: .02em; }
+    .m-warn-note { background: #fff5f5; border: 1px solid rgba(239,68,68,0.15); border-radius: 8px; padding: 11px 13px; margin-top: 10px; font-size: 12px; color: #7f1d1d; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<!-- SWITCHER -->
+<div class="switcher">
+  <span class="switcher-label">Exploration</span>
+  <button class="sw-btn active" onclick="show('A',this)">A — Dashboard Sidebar</button>
+  <button class="sw-btn" onclick="show('B',this)">B — Social Hero</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     EXPLORATION A — Dashboard Sidebar
+══════════════════════════════════════════════ -->
+<div class="exploration expA visible" id="expA">
+  <div class="exp-label">Exploration <span>A</span> — Dashboard Sidebar</div>
+
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-text">XO<br>MARKET</div>
+      <span class="nav-beta">Beta</span>
+    </a>
+    <div class="nav-links">
+      <a href="#">Markets</a><a href="#">Leaderboard</a><a href="#">Pulse Markets</a>
+      <a href="#">Parlays <span class="nav-new">NEW</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-deposit">● Deposit</button>
+      <button class="notif-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </button>
+      <div class="nav-avatar"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#7C5CBF"/><circle cx="16" cy="12" r="5" fill="#1a1a2e" opacity=".7"/><path d="M6 28c0-5.5 4.5-9 10-9s10 3.5 10 9" fill="#1a1a2e" opacity=".7"/></svg></div>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <!-- Avatar + identity -->
+      <div class="sidebar-avatar">
+        <svg viewBox="0 0 72 72" fill="none"><rect width="72" height="72" fill="#7C5CBF"/>
+          <ellipse cx="36" cy="48" rx="14" ry="16" fill="#000"/>
+          <ellipse cx="36" cy="26" rx="9" ry="10" fill="#000"/>
+          <path d="M31 19 Q33 13 35 16 Q36 10 38 14 Q40 8 42 13 Q44 18 40 20 Q36 18 31 19Z" fill="#000"/>
+          <path d="M42 28 L47 26 L42 30Z" fill="#000"/>
+          <circle cx="40" cy="25" r="1.5" fill="#7C5CBF"/>
+        </svg>
+      </div>
+
+      <div class="sidebar-identity">
+        <div class="sidebar-name-row">
+          <span class="sidebar-name">xouser1043</span>
+          <span class="badge-verify">✓ Verify</span>
+        </div>
+
+        <!-- Email -->
+        <div class="sidebar-email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <button class="email-add">Add email address →</button>
+        </div>
+
+        <div class="sidebar-badges">
+          <div class="s-badge">🚫</div><div class="s-badge">⭕</div>
+          <div class="s-badge fire">🔥</div><div class="s-badge">🛡️</div>
+          <div class="s-badge">💫</div><div class="s-badge">🏆</div>
+          <div class="s-badge on">🎯</div>
+        </div>
+
+        <!-- Bio -->
+        <div class="sidebar-bio empty">Introduce yourself — what are you trading and why? (click to add)</div>
+      </div>
+
+      <div class="s-divider"></div>
+
+      <!-- Stats stacked -->
+      <div class="sidebar-stats">
+        <div class="s-stat"><span class="s-stat-label">Total Profit</span><span class="s-stat-val">$0</span></div>
+        <div class="s-stat"><span class="s-stat-label">Volume Traded</span><span class="s-stat-val">—</span></div>
+        <div class="s-stat"><span class="s-stat-label">Markets Traded</span><span class="s-stat-val">0</span></div>
+        <div class="s-stat"><span class="s-stat-label">Markets Won</span><span class="s-stat-val">0</span></div>
+      </div>
+
+      <div class="s-divider"></div>
+
+      <!-- Conviction + referral -->
+      <div class="sidebar-meta">
+        <div class="meta-row">
+          <span class="meta-lbl">Conviction Points</span>
+          <span class="meta-val"><span class="conv-dot"></span> 0</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-lbl">Referral Code</span>
+          <span class="meta-val">
+            <span class="ref-mono">XO-XOUSER1043-AABB</span>
+            <button class="copy-icon">⧉</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="s-divider"></div>
+
+      <!-- Wallet blocks -->
+      <div class="sidebar-wallets">
+        <div class="s-wallet-lbl">Wallets</div>
+        <div class="s-wallet-block">
+          <div class="s-wallet-type">
+            <div class="s-wdot" style="background:#4ade80"></div>
+            <span class="s-wtype" style="color:#4ade80">Smart Account</span>
+          </div>
+          <div class="s-waddr">0x9c7d…a4f2</div>
+          <div class="s-wactions">
+            <button class="s-wcopy">⎘ Copy</button>
+          </div>
+        </div>
+        <div class="s-wallet-block">
+          <div class="s-wallet-type">
+            <div class="s-wdot" style="background:var(--pink)"></div>
+            <span class="s-wtype" style="color:var(--pink)">Embedded Wallet</span>
+          </div>
+          <div class="s-waddr">0x43af…00de</div>
+          <div class="s-wactions">
+            <button class="s-wcopy">⎘ Copy</button>
+            <button class="s-wexport" onclick="openModal()">Export key →</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="top-row">
+        <!-- PnL -->
+        <div class="pnl-card">
+          <div class="pnl-top">
+            <span class="pnl-lbl">Profit / Loss</span>
+            <div class="pnl-filters">
+              <button class="ptf" onclick="ptf(this,'.expA')">1D</button>
+              <button class="ptf" onclick="ptf(this,'.expA')">1W</button>
+              <button class="ptf" onclick="ptf(this,'.expA')">1M</button>
+              <button class="ptf on" onclick="ptf(this,'.expA')">ALL</button>
+            </div>
+          </div>
+          <div><div class="pnl-val">$0.00</div><div class="pnl-period">All-time</div></div>
+          <div class="pnl-chart">
+            <svg viewBox="0 0 300 52" preserveAspectRatio="none">
+              <defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF5BA7" stop-opacity=".15"/><stop offset="100%" stop-color="#FF5BA7" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0 38 L300 38" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4 3"/>
+              <path d="M0 38 C60 38 120 38 180 38 C240 38 280 38 300 38" stroke="#FF5BA7" stroke-width="2" fill="none"/>
+              <path d="M0 38 C60 38 120 38 180 38 C240 38 280 38 300 38 L300 52 L0 52Z" fill="url(#gA)"/>
+            </svg>
+          </div>
+          <div class="pnl-compare">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            vs Polymarket
+          </div>
+        </div>
+
+        <!-- Quick stat cards stacked -->
+        <div class="quick-actions">
+          <div class="qa-card"><div class="qa-label">Markets Traded</div><div class="qa-val">0</div></div>
+          <div class="qa-card"><div class="qa-label">Markets Won</div><div class="qa-val">0</div></div>
+        </div>
+      </div>
+
+      <!-- Portfolio -->
+      <div class="portfolio-section">
+        <div class="port-head">
+          <div class="port-tabs">
+            <button class="port-tab on" onclick="portTab(this,'.expA')">Portfolio</button>
+            <button class="port-tab" onclick="portTab(this,'.expA')">Markets</button>
+            <button class="port-tab" onclick="portTab(this,'.expA')">Activity</button>
+          </div>
+          <div class="port-right">
+            <div class="filter-chips">
+              <button class="chip on" onclick="chip(this)">Active</button>
+              <button class="chip" onclick="chip(this)">Closed</button>
+            </div>
+            <div class="search-box">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input placeholder="Search position" />
+            </div>
+            <button class="btn-create">+ Create Conviction</button>
+          </div>
+        </div>
+        <div class="port-bar">
+          <span>You have 0 unclaimed markets</span>
+          <button class="btn-claim">Claim all</button>
+        </div>
+        <div class="table-head">
+          <div class="th">Markets</div><div class="th">Total stake</div>
+          <div class="th">PnL</div><div class="th">Status</div><div class="th">Actions</div>
+        </div>
+        <div class="empty"><p>No positions found</p><span>Your portfolio positions will appear here</span></div>
+      </div>
+    </main>
+  </div>
+</div><!-- /expA -->
+
+
+<!-- ══════════════════════════════════════════════
+     EXPLORATION B — Social Hero
+══════════════════════════════════════════════ -->
+<div class="exploration expB" id="expB">
+  <div class="exp-label">Exploration <span>B</span> — Social Hero</div>
+
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-text">XO<br>MARKET</div>
+      <span class="nav-beta">Beta</span>
+    </a>
+    <div class="nav-links">
+      <a href="#">Markets</a><a href="#">Leaderboard</a><a href="#">Pulse Markets</a>
+      <a href="#">Parlays <span class="nav-new">NEW</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-deposit">● Deposit</button>
+      <button class="notif-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </button>
+      <div class="nav-avatar"><svg viewBox="0 0 32 32"><rect width="32" height="32" fill="#7C5CBF"/><circle cx="16" cy="12" r="5" fill="#1a1a2e" opacity=".7"/><path d="M6 28c0-5.5 4.5-9 10-9s10 3.5 10 9" fill="#1a1a2e" opacity=".7"/></svg></div>
+    </div>
+  </nav>
+
+  <!-- Hero banner -->
+  <div class="hero">
+    <div class="hero-pattern"></div>
+    <div class="hero-grid"></div>
+  </div>
+
+  <!-- Identity card overlapping hero -->
+  <div class="identity-wrap">
+    <div class="identity-card">
+      <div class="identity-top">
+        <!-- Avatar lifts above the card top -->
+        <div class="b-avatar">
+          <svg viewBox="0 0 100 100" fill="none"><rect width="100" height="100" fill="#7C5CBF"/>
+            <ellipse cx="50" cy="68" rx="20" ry="23" fill="#000"/>
+            <ellipse cx="50" cy="38" rx="13" ry="14" fill="#000"/>
+            <path d="M43 28 Q46 20 48 24 Q50 15 52 21 Q54 12 57 19 Q60 26 56 29 Q50 26 43 28Z" fill="#000"/>
+            <path d="M60 40 L67 38 L60 44Z" fill="#000"/>
+            <circle cx="57" cy="36" r="2" fill="#7C5CBF"/>
+          </svg>
+        </div>
+
+        <div class="identity-mid">
+          <div class="b-name-row">
+            <span class="b-name">xouser1043</span>
+            <span class="b-verify">✓ Verify</span>
+          </div>
+          <div class="b-badges">
+            <div class="b-badge">🚫</div><div class="b-badge">⭕</div>
+            <div class="b-badge fire">🔥</div><div class="b-badge">🛡️</div>
+            <div class="b-badge">💫</div><div class="b-badge">🏆</div>
+            <div class="b-badge on">🎯</div>
+          </div>
+          <!-- Bio — sits naturally like a social profile bio -->
+          <div class="b-bio empty">No bio yet — click to tell the market who you are.</div>
+        </div>
+
+        <div class="identity-actions">
+          <button class="b-gear" onclick="openModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats bar — horizontal strip inside the card -->
+      <div class="stats-bar">
+        <div class="stat-cell"><div class="sc-label">Total Profit</div><div class="sc-val">$0</div></div>
+        <div class="stat-cell"><div class="sc-label">Volume Traded</div><div class="sc-val">—</div></div>
+        <div class="stat-cell"><div class="sc-label">Markets Traded</div><div class="sc-val">0</div></div>
+        <div class="stat-cell"><div class="sc-label">Markets Won</div><div class="sc-val">0</div></div>
+        <div class="stat-cell conviction">
+          <div class="sc-label">Conviction Pts</div>
+          <div class="sc-val"><span class="cv-dot"></span> 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page body -->
+  <div class="page">
+
+    <!-- PnL + info card -->
+    <div class="mid-row">
+      <div class="pnl-card">
+        <div class="pnl-top">
+          <span class="pnl-lbl">Profit / Loss</span>
+          <div class="pnl-filters">
+            <button class="ptf" onclick="ptf(this,'.expB')">1D</button>
+            <button class="ptf" onclick="ptf(this,'.expB')">1W</button>
+            <button class="ptf" onclick="ptf(this,'.expB')">1M</button>
+            <button class="ptf on" onclick="ptf(this,'.expB')">ALL</button>
+          </div>
+        </div>
+        <div><div class="pnl-val">$0.00</div><div class="pnl-period">All-time</div></div>
+        <div class="pnl-chart">
+          <svg viewBox="0 0 300 52" preserveAspectRatio="none">
+            <defs><linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF5BA7" stop-opacity=".15"/><stop offset="100%" stop-color="#FF5BA7" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 38 L300 38" stroke="#E5E5E5" stroke-width="1" stroke-dasharray="4 3"/>
+            <path d="M0 38 C60 38 120 38 180 38 C240 38 280 38 300 38" stroke="#FF5BA7" stroke-width="2" fill="none"/>
+            <path d="M0 38 C60 38 120 38 180 38 C240 38 280 38 300 38 L300 52 L0 52Z" fill="url(#gB)"/>
+          </svg>
+        </div>
+        <div class="pnl-compare">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          vs Polymarket
+        </div>
+      </div>
+
+      <!-- Referral + Wallets -->
+      <div class="info-card">
+        <!-- Email -->
+        <div>
+          <div class="ic-section-label" style="margin-bottom:8px;">Email</div>
+          <div class="email-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>No email added</span>
+            <button class="ep-add">+ Add</button>
+          </div>
+        </div>
+        <div class="ic-divider"></div>
+        <div>
+          <div class="ic-section-label" style="margin-bottom:8px;">Referral Code</div>
+          <div class="referral-pill">
+            <span class="ref-code">XO-XOUSER1043-AABB</span>
+            <button class="ref-copy">⧉</button>
+          </div>
+        </div>
+        <div class="ic-divider"></div>
+        <div>
+          <div class="ic-section-label" style="margin-bottom:8px;">Wallets</div>
+          <div class="ic-wallet">
+            <div class="icw-header">
+              <div class="icw-dot" style="background:#4ade80"></div>
+              <span class="icw-type" style="color:#4ade80">Smart Account</span>
+            </div>
+            <div class="icw-addr">0x9c7d…a4f2</div>
+            <div class="icw-actions">
+              <button class="icw-copy">⎘ Copy</button>
+            </div>
+          </div>
+          <div class="ic-wallet" style="margin-top:6px;">
+            <div class="icw-header">
+              <div class="icw-dot" style="background:var(--pink)"></div>
+              <span class="icw-type" style="color:var(--pink)">Embedded Wallet</span>
+            </div>
+            <div class="icw-addr">0x43af…00de</div>
+            <div class="icw-actions">
+              <button class="icw-copy">⎘ Copy</button>
+              <button class="icw-export" onclick="openModal()">Export key →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio -->
+    <div class="portfolio">
+      <div class="port-head">
+        <div class="port-tabs">
+          <button class="p-tab on" onclick="portTab(this,'.expB')">Portfolio</button>
+          <button class="p-tab" onclick="portTab(this,'.expB')">Markets</button>
+          <button class="p-tab" onclick="portTab(this,'.expB')">Activity</button>
+        </div>
+        <div class="port-controls">
+          <div class="filter-pills">
+            <button class="fpill on" onclick="fpill(this)">Active</button>
+            <button class="fpill" onclick="fpill(this)">Closed</button>
+          </div>
+          <div class="b-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input placeholder="Search position" />
+          </div>
+          <button class="b-create">+ Create Conviction</button>
+        </div>
+      </div>
+      <div class="port-bar">
+        <span>You have 0 unclaimed markets</span>
+        <button class="b-claim">Claim all</button>
+      </div>
+      <div class="table-head">
+        <div class="th">Markets</div><div class="th">Total stake</div>
+        <div class="th">PnL</div><div class="th">Status</div><div class="th">Actions</div>
+      </div>
+      <div class="empty"><p>No positions found</p><span>Your portfolio positions will appear here</span></div>
+    </div>
+  </div>
+</div><!-- /expB -->
+
+
+<!-- SHARED EXPORT MODAL -->
+<div class="modal-bg" id="expModal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="export-modal" onclick="event.stopPropagation()">
+
+    <!-- Step 0 -->
+    <div id="mStep0">
+      <div class="m-header">
+        <div><div class="m-eyebrow">Advanced · Irreversible</div><div class="m-title">Export private key</div></div>
+        <button class="m-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="m-body">
+        <div class="m-steps"><div class="m-step active"></div><div class="m-step"></div></div>
+        <div class="mw-ref">
+          <div class="mw-dot"></div>
+          <div>
+            <div class="mw-type">Embedded Wallet</div>
+            <div class="mw-addr">0x43af5d…00de</div>
+            <div class="mw-sub">This key gives full control over this wallet and any funds inside it.</div>
+          </div>
+        </div>
+        <div class="warn-block">
+          <div class="warn-title">🚨 This gives full access to funds</div>
+          <ul class="warn-list">
+            <li>Anyone who has this key can drain this wallet — immediately and irreversibly</li>
+            <li>If you lose this key, no one can recover it — not even XO</li>
+            <li>Never share it, screenshot it, or store it in a messaging app</li>
+          </ul>
+        </div>
+        <div class="c-row" id="mc0" onclick="mCheck(0)"><div class="c-box" id="mcb0"></div><span class="c-text">I understand anyone with this key can access all funds in this wallet</span></div>
+        <div class="c-row" id="mc1" onclick="mCheck(1)"><div class="c-box" id="mcb1"></div><span class="c-text">I understand this key cannot be recovered if lost</span></div>
+        <button class="m-btn m-btn-black" id="mContinue" disabled onclick="mStep1()">Continue</button>
+        <button class="m-btn m-btn-ghost" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="mStep1" style="display:none">
+      <div class="m-header">
+        <div><div class="m-eyebrow neutral">Embedded Wallet · Private Key</div><div class="m-title">Your private key</div></div>
+        <button class="m-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="m-body">
+        <div class="m-steps"><div class="m-step done"></div><div class="m-step active"></div></div>
+        <button class="m-back" onclick="mStep0()">← Back</button>
+        <p style="font-size:13px;color:#555;margin-bottom:16px;line-height:1.6;">Write this down or save it in a password manager. <strong style="color:#000">Do not screenshot it.</strong></p>
+        <div class="key-box">
+          <div class="key-box-lbl">Private Key · Embedded Wallet</div>
+          <div class="key-val" id="mKeyVal">3a7f92bc1d4e8f0a6b2c9d5e1f3a7f92bc1d4e8f0a6b2c9d5e1f3a7f92bc1d4e</div>
+        </div>
+        <button class="m-btn m-btn-ghost" id="mCopyKey" onclick="mCopyKey()">Copy key</button>
+        <button class="m-btn m-btn-black" onclick="closeModal()">I've saved it — close</button>
+        <div class="m-warn-note">⚠ After closing this screen your key will not be shown again without re-authentication.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Switcher
+  function show(id, btn) {
+    document.querySelectorAll('.exploration').forEach(e => e.classList.remove('visible'));
+    document.getElementById('exp' + id).classList.add('visible');
+    document.querySelectorAll('.sw-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // PnL time filters (scoped per exploration)
+  function ptf(el, scope) {
+    el.closest('.pnl-filters').querySelectorAll('.ptf').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+  }
+
+  // Portfolio tabs
+  function portTab(el, scope) {
+    el.closest('.port-tabs').querySelectorAll('button').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+  }
+
+  // Exp A chips
+  function chip(el) {
+    el.closest('.filter-chips').querySelectorAll('.chip').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+  }
+
+  // Exp B filter pills
+  function fpill(el) {
+    el.closest('.filter-pills').querySelectorAll('.fpill').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+  }
+
+  // Export modal
+  const mChecks = [false, false];
+
+  function openModal() {
+    mChecks[0] = mChecks[1] = false;
+    [0,1].forEach(i => {
+      document.getElementById('mc' + i).classList.remove('on');
+      document.getElementById('mcb' + i).textContent = '';
+    });
+    document.getElementById('mContinue').disabled = true;
+    document.getElementById('mStep0').style.display = 'block';
+    document.getElementById('mStep1').style.display = 'none';
+    document.getElementById('mCopyKey').textContent = 'Copy key';
+    document.getElementById('mCopyKey').style.cssText = '';
+    document.getElementById('expModal').style.display = 'flex';
+  }
+
+  function closeModal() { document.getElementById('expModal').style.display = 'none'; }
+
+  function mCheck(i) {
+    mChecks[i] = !mChecks[i];
+    document.getElementById('mc' + i).classList.toggle('on', mChecks[i]);
+    document.getElementById('mcb' + i).textContent = mChecks[i] ? '✓' : '';
+    document.getElementById('mContinue').disabled = !(mChecks[0] && mChecks[1]);
+  }
+
+  function mStep1() {
+    document.getElementById('mStep0').style.display = 'none';
+    document.getElementById('mStep1').style.display = 'block';
+  }
+
+  function mStep0() {
+    document.getElementById('mStep1').style.display = 'none';
+    document.getElementById('mStep0').style.display = 'block';
+  }
+
+  function mCopyKey() {
+    navigator.clipboard.writeText(document.getElementById('mKeyVal').textContent).catch(() => {});
+    const btn = document.getElementById('mCopyKey');
+    btn.textContent = '✓ Copied — store it safely';
+    btn.style.color = '#16a34a';
+    btn.style.borderColor = 'rgba(34,197,94,0.35)';
+    setTimeout(() => { btn.textContent = 'Copy key'; btn.style.color = ''; btn.style.borderColor = ''; }, 3000);
+  }
+</script>
+</body>
+</html>
